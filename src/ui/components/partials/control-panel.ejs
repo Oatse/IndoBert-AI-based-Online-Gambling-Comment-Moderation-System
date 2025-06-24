@@ -1,0 +1,43 @@
+<!-- Control Panel Component -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-cogs me-2"></i>Auto Monitor Control</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button id="start-monitor" class="btn btn-success" <%= monitorStatus.isRunning ? 'disabled' : '' %>>
+                        <i class="fas fa-play me-2"></i>Start Auto Monitor
+                    </button>
+                    <button id="stop-monitor" class="btn btn-danger" <%= !monitorStatus.isRunning ? 'disabled' : '' %>>
+                        <i class="fas fa-stop me-2"></i>Stop Auto Monitor
+                    </button>
+                </div>
+                <% if (monitorStatus.isRunning && monitorStatus.startTime) { %>
+                <div class="mt-3">
+                    <small class="text-muted">
+                        Started: <%= new Date(monitorStatus.startTime).toLocaleString() %>
+                    </small>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-vial me-2"></i>Test Spam Detection</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <textarea id="test-text" class="form-control" rows="3" placeholder="Masukkan teks untuk ditest..."></textarea>
+                </div>
+                <button id="test-detection" class="btn btn-primary">
+                    <i class="fas fa-search me-2"></i>Test Detection
+                </button>
+                <div id="test-result" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+</div>

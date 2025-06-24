@@ -1,0 +1,17 @@
+/* Test Detection Component Styles */
+.test-result {
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.test-result.spam {
+    background-color: #fff5f5;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.test-result.normal {
+    background-color: #f8fff8;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
