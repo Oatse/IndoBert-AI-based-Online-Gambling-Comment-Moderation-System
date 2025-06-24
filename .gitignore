@@ -70,10 +70,12 @@ Thumbs.db
 tmp/
 temp/
 
-# Large model files (should be downloaded separately or use Git LFS)
-python/models/*.safetensors
-python/models/*.zip
-python/models/*.bin
+# Large model files are now tracked with Git LFS
+# python/models/*.safetensors  # Now tracked with LFS
+# python/models/*.zip          # Now tracked with LFS
+# python/models/*.bin          # Now tracked with LFS
+
+# Other large model files (if not using LFS)
 python/models/*.h5
 python/models/*.pkl
 python/models/*.joblib

@@ -1,53 +1,68 @@
 # Model Files
 
-This directory contains the AI models used for spam detection. Due to file size limitations, the model files are not included in the Git repository.
+This directory contains the AI models used for spam detection. Large model files are stored using **Git LFS (Large File Storage)** for efficient version control.
 
-## Required Model Files
+## Model Files (Git LFS Tracked)
 
 ### 1. IndoBERT Model
-- **File**: `model.safetensors` (~475 MB)
+- **File**: `model.safetensors` (~475 MB) ✅ **Git LFS**
 - **Description**: Fine-tuned IndoBERT model for Indonesian spam detection
-- **Download**: [Contact repository owner for download link]
+- **Status**: Automatically downloaded when cloning repository
 
 ### 2. Model Archive
-- **File**: `indobert-judul-classifier.zip` (~440 MB)
+- **File**: `indobert-judul-classifier.zip` (~440 MB) ✅ **Git LFS**
 - **Description**: Complete model package with tokenizer and configuration
-- **Download**: [Contact repository owner for download link]
+- **Status**: Automatically downloaded when cloning repository
 
-### 3. Vocabulary File
+### 3. Training Arguments
+- **File**: `training_args.bin` (~1 KB) ✅ **Git LFS**
+- **Description**: Training configuration and hyperparameters
+- **Status**: Automatically downloaded when cloning repository
+
+### 4. Configuration Files (Regular Git)
 - **File**: `vocab.txt` (~220 KB)
-- **Description**: Tokenizer vocabulary (included in repository)
+- **File**: `config.json` (~1 KB)
+- **File**: `tokenizer_config.json` (~1 KB)
+- **File**: `special_tokens_map.json` (~1 KB)
+- **Description**: Model configuration files (included in regular Git)
 
 ## Setup Instructions
 
-1. Download the required model files from the provided links
-2. Place them in this directory (`python/models/`)
-3. Ensure the following files exist:
-   ```
-   python/models/
-   ├── model.safetensors
-   ├── indobert-judul-classifier.zip
-   ├── vocab.txt
-   └── README.md (this file)
+### For Users (Cloning Repository):
+1. **Clone repository with Git LFS**:
+   ```bash
+   git clone https://github.com/Oatse/IndoBert-AI-based-Online-Gambling-Comment-Moderation-System.git
+   cd IndoBert-AI-based-Online-Gambling-Comment-Moderation-System
    ```
 
-## Alternative: Using Git LFS
+2. **Verify model files are downloaded**:
+   ```bash
+   ls -la python/models/
+   # Should show all files including large model files
+   ```
 
-If you prefer to use Git LFS for large files:
+3. **If LFS files not downloaded automatically**:
+   ```bash
+   git lfs pull
+   ```
 
-```bash
-# Install Git LFS
-git lfs install
+### For Developers (Contributing):
+1. **Install Git LFS** (if not already installed):
+   ```bash
+   git lfs install
+   ```
 
-# Track large model files
-git lfs track "python/models/*.safetensors"
-git lfs track "python/models/*.zip"
+2. **Large files are automatically tracked**:
+   - `*.safetensors` files
+   - `*.bin` files
+   - `*.zip` files in `python/models/`
 
-# Add and commit
-git add .gitattributes
-git add python/models/
-git commit -m "Add model files with Git LFS"
-```
+3. **Add and commit normally**:
+   ```bash
+   git add python/models/
+   git commit -m "Update model files"
+   git push
+   ```
 
 ## Model Information
 
@@ -64,13 +79,27 @@ The models are automatically loaded by the spam detection service when the appli
 
 ## File Sizes
 
-- `model.safetensors`: ~475 MB
-- `indobert-judul-classifier.zip`: ~440 MB
-- `vocab.txt`: ~220 KB
-- **Total**: ~915 MB
+- `model.safetensors`: ~475 MB ✅ **Git LFS**
+- `indobert-judul-classifier.zip`: ~440 MB ✅ **Git LFS**
+- `training_args.bin`: ~1 KB ✅ **Git LFS**
+- `vocab.txt`: ~220 KB (regular Git)
+- `config.json`: ~1 KB (regular Git)
+- `tokenizer_config.json`: ~1 KB (regular Git)
+- `special_tokens_map.json`: ~1 KB (regular Git)
+- **Total LFS**: ~915 MB
+- **Total Regular**: ~223 KB
+
+## Git LFS Benefits
+
+- ✅ **Version Control**: Full version history for large files
+- ✅ **Efficient Cloning**: Only download LFS files when needed
+- ✅ **Bandwidth Optimization**: LFS files downloaded separately
+- ✅ **Team Collaboration**: Easy sharing of large model files
+- ✅ **GitHub Integration**: Native support for LFS in GitHub
 
 ## Notes
 
-- These files are excluded from Git tracking due to size limitations
-- Consider using cloud storage or Git LFS for version control of large models
-- Models should be downloaded separately during deployment
+- Large model files are now tracked with Git LFS
+- Files automatically download when cloning repository
+- Use `git lfs pull` if files don't download automatically
+- LFS provides efficient storage and bandwidth usage for large files
