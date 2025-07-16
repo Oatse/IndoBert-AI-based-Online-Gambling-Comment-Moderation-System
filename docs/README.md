@@ -1,254 +1,108 @@
-# Judol Remover - Spam Comment Detector
+# 🛡️ Judol Remover - Streamlit Edition
 
-Program untuk menghapus komentar spam/judol di Facebook menggunakan Graph API dan model IndoBERT untuk deteksi yang lebih akurat.
+Aplikasi deteksi dan penghapusan komentar spam/judol otomatis untuk Facebook menggunakan IndoBERT dan Streamlit.
 
-## Fitur
-
-- ✅ Integrasi dengan Facebook Graph API
-- ✅ Deteksi spam menggunakan model IndoBERT yang sudah dilatih
-- ✅ Dua mode operasi: Child Process dan HTTP API
-- ✅ Fallback ke regex pattern jika model gagal
-- ✅ Batch prediction untuk performa lebih baik
-- ✅ Logging dan monitoring prediksi
-
-## Struktur Project
+## 📁 Project Structure
 
 ```
-├── Model/                          # Model IndoBERT
-│   ├── config.json
-│   ├── model.safetensors
-│   ├── tokenizer_config.json
-│   └── vocab.txt
-├── index.js                        # Main application
-├── spamDetectorBridge.js           # Bridge Node.js ↔ Python
-├── spam_detector.py                # Python script untuk prediksi
-├── spam_api.py                     # Flask API server
-├── test_spam_detector.js           # Testing script
-├── start_api_server.js             # Script untuk start API server
-├── requirements.txt                # Python dependencies
-└── .env.example                    # Environment variables template
+📦 Programm/
+├── 📄 streamlit_app.py          # Main Streamlit application
+├── 📄 streamlit_facebook.py     # Facebook API wrapper
+├── 📄 streamlit_monitor.py      # Auto monitoring service
+├── 📄 run_streamlit.py          # Startup script
+├── 📄 requirements.txt          # Python dependencies
+├── 📄 start_streamlit.bat       # Windows batch script
+├── 📁 .streamlit/               # Streamlit configuration
+│   └── config.toml
+├── 📁 python/                   # Python services
+│   ├── 📁 models/               # IndoBERT model files
+│   │   ├── config.json
+│   │   ├── model.safetensors
+│   │   ├── tokenizer_config.json
+│   │   └── vocab.txt
+│   └── 📁 services/             # Python AI services
+│       └── spam_detector.py     # Spam detection service
+├── 📄 .env                      # Environment variables
+├── 📄 README_STREAMLIT.md       # Detailed documentation
+└── 📄 CONVERSION_SUMMARY.md     # Migration summary
 ```
 
-## Setup dan Instalasi
+## 🚀 Quick Start
 
-### 1. Install Node.js Dependencies
-
-```bash
-npm install
-```
-
-### 2. Install Python Dependencies
-
-Pastikan Python sudah terinstall, kemudian:
-
+### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-Atau menggunakan npm script:
+### 2. Setup Environment
+Buat file `.env` dengan konfigurasi berikut:
+```
+PAGE_ID=your_facebook_page_id
+PAGE_ACCESS_TOKEN=your_page_access_token
+MODEL_PATH=./python/models
+CONFIDENCE_THRESHOLD=0.8
+```
 
+### 3. Run Application
 ```bash
-npm run install-python-deps
+# Menggunakan startup script (recommended)
+python run_streamlit.py
+
+# Atau langsung dengan Streamlit
+python -m streamlit run streamlit_app.py
+
+# Atau menggunakan batch file (Windows)
+start_streamlit.bat
 ```
 
-### 3. Setup Environment Variables
+### 4. Access Dashboard
+Buka browser ke: **http://localhost:8501**
 
-Copy `.env.example` ke `.env` dan isi dengan konfigurasi Anda:
+## 🎯 Features
 
+- **🤖 AI-Powered Detection** - IndoBERT untuk deteksi spam bahasa Indonesia
+- **📊 Real-time Dashboard** - Monitoring dan statistik live
+- **🔄 Auto Monitoring** - Deteksi dan penghapusan otomatis
+- **👥 Manual Moderation** - Review dan moderasi manual
+- **📝 Activity Logs** - Riwayat lengkap aktivitas
+- **⚙️ Configurable Settings** - Pengaturan threshold dan API
+
+## 📊 Dashboard Pages
+
+1. **Dashboard** - Overview dan monitoring real-time
+2. **Manual Check** - Periksa post tertentu untuk spam
+3. **Test Detector** - Test deteksi dengan teks custom
+4. **Settings** - Konfigurasi API dan parameter
+5. **Logs** - Riwayat aktivitas dan log sistem
+
+## 🔧 Configuration
+
+### Environment Variables
+- `PAGE_ID` - Facebook Page ID
+- `PAGE_ACCESS_TOKEN` - Facebook Page Access Token
+- `MODEL_PATH` - Path ke model IndoBERT
+- `CONFIDENCE_THRESHOLD` - Threshold confidence untuk klasifikasi spam
+
+### Model Requirements
+Pastikan file-file berikut ada di `python/models/`:
+- `config.json`
+- `model.safetensors`
+- `tokenizer_config.json`
+- `vocab.txt`
+
+## 🛠️ Development
+
+### Testing
 ```bash
-cp .env.example .env
+python -m pytest tests/
 ```
 
-Edit file `.env`:
+## 📞 Support
 
-```env
-PAGE_ID=your_facebook_page_id_here
-PAGE_ACCESS_TOKEN=your_facebook_page_access_token_here
-```
+Untuk bantuan dan troubleshooting, lihat:
+- `README_STREAMLIT.md` - Dokumentasi lengkap
+- `CONVERSION_SUMMARY.md` - Ringkasan konversi dari Node.js
 
-### 4. Test Model
-
-Test apakah model berfungsi dengan baik:
-
-```bash
-npm test
-# atau
-npm run test-detector
-```
-
-## Cara Penggunaan
-
-### Mode 1: Child Process (Default)
-
-Jalankan langsung aplikasi utama:
-
-```bash
-npm start
-```
-
-### Mode 2: HTTP API Server
-
-1. Start Python API server:
-
-```bash
-npm run start-api
-```
-
-2. Di terminal lain, ubah mode di `index.js`:
-
-```javascript
-const spamDetector = new SpamDetectorBridge({
-  mode: 'http', // Ubah dari 'child_process' ke 'http'
-  apiUrl: 'http://localhost:5000',
-  timeout: 30000
-});
-```
-
-3. Jalankan aplikasi:
-
-```bash
-npm start
-```
-
-## Konfigurasi
-
-### SpamDetectorBridge Options
-
-```javascript
-const spamDetector = new SpamDetectorBridge({
-  mode: 'child_process',           // 'child_process' atau 'http'
-  apiUrl: 'http://localhost:5000', // URL untuk HTTP mode
-  pythonPath: 'python',            // Path ke Python executable
-  scriptPath: './spam_detector.py', // Path ke script Python
-  timeout: 30000                   // Timeout dalam milliseconds
-});
-```
-
-### Confidence Threshold
-
-Ubah threshold confidence di fungsi `isSpamComment`:
-
-```javascript
-// Return true jika diprediksi sebagai spam dengan confidence > 0.8 (lebih ketat)
-return prediction.is_spam && prediction.confidence > 0.8;
-```
-
-### Optimized Mode
-
-Untuk performa terbaik, gunakan optimized mode yang memuat model sekali dan menggunakannya berulang kali:
-
-```javascript
-const spamDetector = new SpamDetectorBridge({
-  mode: 'child_process',
-  useOptimized: true,  // Aktifkan optimized mode
-  timeout: 30000
-});
-```
-
-## API Endpoints (HTTP Mode)
-
-### Health Check
-```
-GET /health
-```
-
-### Single Prediction
-```
-POST /predict
-Content-Type: application/json
-
-{
-  "text": "Teks yang akan diprediksi"
-}
-```
-
-### Batch Prediction
-```
-POST /predict_batch
-Content-Type: application/json
-
-{
-  "texts": ["Teks 1", "Teks 2", "Teks 3"]
-}
-```
-
-## Testing
-
-### Test Model Prediksi
-
-```bash
-npm test
-```
-
-### Test Simple (Recommended)
-
-```bash
-node test_simple.js
-```
-
-### Test Manual dengan Python
-
-```bash
-python spam_detector.py "Teks yang akan ditest"
-```
-
-### Test Optimized Python Script
-
-```bash
-echo "Teks yang akan ditest" | python spam_detector_optimized.py
-```
-
-### Test API Server
-
-```bash
-curl -X POST http://localhost:5000/predict \
-  -H "Content-Type: application/json" \
-  -d '{"text": "PROMO GILA! Diskon 90%!"}'
-```
-
-## Troubleshooting
-
-### Python tidak ditemukan
-
-- Install Python dari [python.org](https://python.org)
-- Atau ubah `pythonPath` di konfigurasi ke `python3`
-
-### Model tidak bisa dimuat
-
-- Pastikan file model ada di folder `Model/`
-- Check apakah semua dependencies Python sudah terinstall
-- Coba jalankan `python spam_detector.py "test"` untuk debug
-
-### Facebook API Error
-
-- Pastikan `PAGE_ACCESS_TOKEN` valid dan memiliki permission yang tepat
-- Check apakah `PAGE_ID` benar
-- Pastikan token belum expired
-
-### Memory/Performance Issues
-
-- Gunakan HTTP mode untuk aplikasi production
-- Adjust timeout sesuai kebutuhan
-- Consider menggunakan GPU jika tersedia
-
-## Model Information
-
-Model IndoBERT yang digunakan sudah dilatih khusus untuk mendeteksi komentar spam/judol dalam bahasa Indonesia. Model ini dapat mengenali:
-
-- Promosi produk/jasa
-- Link spam
-- Kontak WhatsApp/Telegram
-- Penipuan online
-- Dan pola spam lainnya
-
-## Contributing
-
-1. Fork repository
-2. Buat feature branch
-3. Commit changes
-4. Push ke branch
-5. Create Pull Request
-
-## License
+## 📄 License
 
 MIT License

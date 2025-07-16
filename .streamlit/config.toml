@@ -1,0 +1,32 @@
+[global]
+# Streamlit configuration for Judol Remover - Cloud Deployment
+
+[server]
+# Server configuration for cloud deployment
+enableCORS = false
+enableXsrfProtection = false
+maxUploadSize = 200
+headless = true
+
+[browser]
+# Browser configuration for cloud deployment
+gatherUsageStats = false
+
+[theme]
+# Theme configuration
+primaryColor = "#1f77b4"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f0f2f6"
+textColor = "#262730"
+font = "sans serif"
+
+[runner]
+# Runner configuration
+magicEnabled = true
+postScriptGC = true
+fastReruns = true
+
+[logger]
+# Logging configuration
+level = "info"
+messageFormat = "%(asctime)s %(message)s"
