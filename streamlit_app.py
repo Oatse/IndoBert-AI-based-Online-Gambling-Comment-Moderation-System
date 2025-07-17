@@ -10,15 +10,6 @@ import sys
 import streamlit as st
 from pathlib import Path
 
-from dotenv import load_dotenv
-
-# Memuat file .env
-load_dotenv()
-
-# Mengakses variabel dari file .env
-page_key = os.getenv('PAGE_ID')
-page_acces_token = os.getenv('PAGE_ACCESS_TOKEN')
-
 # Add project root to Python path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
@@ -26,20 +17,42 @@ sys.path.insert(0, str(project_root))
 def setup_environment():
     """Setup environment for Streamlit Cloud deployment"""
     # Load secrets from Streamlit Cloud or environment variables
-    if hasattr(st, 'secrets'):
+    if hasattr(st, 'secrets') and st.secrets:
         # Running on Streamlit Cloud - use secrets
-        for key, value in st.secrets.items():
-            if isinstance(value, str):
-                os.environ[key] = value
-    else:
-        # Running locally - try to load from .env
         try:
-            from dotenv import load_dotenv
-            env_path = project_root / '.env'
-            if env_path.exists():
-                load_dotenv(env_path)
-        except ImportError:
-            pass
+            for key, value in st.secrets.items():
+                if isinstance(value, str):
+                    os.environ[key] = value
+            st.success("✅ Loaded configuration from Streamlit Cloud secrets")
+        except Exception as e:
+            st.warning(f"⚠️ Error loading Streamlit secrets: {str(e)}")
+
+    # Always try to load from .env as fallback (for local development)
+    try:
+        from dotenv import load_dotenv
+        env_path = project_root / '.env'
+        if env_path.exists():
+            load_dotenv(env_path)
+            st.success("✅ Loaded configuration from .env file")
+        else:
+            st.info("ℹ️ No .env file found - using environment variables or Streamlit secrets")
+    except ImportError:
+        st.warning("⚠️ python-dotenv not installed. Using environment variables only.")
+
+    # Validate required environment variables
+    required_vars = ['PAGE_ID', 'PAGE_ACCESS_TOKEN']
+    missing_vars = []
+
+    for var in required_vars:
+        if not os.getenv(var):
+            missing_vars.append(var)
+
+    if missing_vars:
+        st.error(f"❌ Missing required environment variables: {', '.join(missing_vars)}")
+        st.error("Please configure these in your .env file or Streamlit Cloud secrets.")
+        return False
+
+    return True
 
 def check_model_files():
     """Check if model files exist, show warning if missing"""
@@ -64,12 +77,20 @@ def check_model_files():
 
 def main():
     """Main application entry point for Streamlit Cloud"""
+    st.set_page_config(
+        page_title="Judol Remover",
+        page_icon="🛡️",
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
+
     # Setup environment
-    setup_environment()
-    
+    if not setup_environment():
+        st.stop()
+
     # Check model files (non-blocking)
     check_model_files()
-    
+
     # Import and run the main application
     try:
         from src.app.app_controller import main as app_main
@@ -85,3 +106,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
