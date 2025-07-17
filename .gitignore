@@ -97,3 +97,6 @@ python/models/*.joblib
 # Build outputs
 dist/
 build/
+streamlit_app.py
+DEPLOYMENT_CHAPTER.md
+test_streamlit_deployment.py

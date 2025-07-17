@@ -10,6 +10,15 @@ import sys
 import streamlit as st
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+# Memuat file .env
+load_dotenv()
+
+# Mengakses variabel dari file .env
+page_key = os.getenv('PAGE_ID')
+page_acces_token = os.getenv('PAGE_ACCESS_TOKEN')
+
 # Add project root to Python path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
