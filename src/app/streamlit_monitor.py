@@ -282,37 +282,37 @@ class AutoMonitor:
     def _check_for_new_comments(self):
         """Check for new comments and process them"""
         try:
-            # Get recent posts
-            posts = self.facebook_api.get_recent_posts(limit=5)
-            
+            # Get recent posts (increased to handle more posts)
+            posts = self.facebook_api.get_recent_posts(limit=10)
+
             for post in posts:
                 post_id = post['id']
-                
-                # Get comments for this post
-                comments = self.facebook_api.get_post_comments(post_id, limit=20)
-                
+
+                # Get comments for this post (keep current limit of 50)
+                comments = self.facebook_api.get_post_comments(post_id, limit=50)
+
                 for comment in comments:
                     comment_id = comment['id']
-                    
+
                     # Skip if already processed
                     if comment_id in self.processed_comments:
                         continue
-                    
+
                     # Process new comment
                     self._process_comment(comment, post_id)
                     self.processed_comments.add(comment_id)
-                    
+
                     # Limit processed comments set size
                     if len(self.processed_comments) > 1000:
                         # Remove oldest 200 entries
                         old_comments = list(self.processed_comments)[:200]
                         for old_id in old_comments:
                             self.processed_comments.discard(old_id)
-        
+
         except Exception as e:
             logger.error(f"Error checking for new comments: {str(e)}")
             raise
-    
+
     def _process_comment(self, comment: Dict, post_id: str):
         """
         Process a single comment for spam detection
@@ -375,10 +375,8 @@ class AutoMonitor:
                 logger.info(f"DECISION: Auto delete setting = {current_auto_delete} (UI: {getattr(st.session_state, 'auto_delete_enabled', 'N/A')})")
 
                 if current_auto_delete:
-                    # Auto delete spam comment
+                    # Auto delete spam comment (spam_removed counter is incremented inside _delete_spam_comment)
                     if self._delete_spam_comment(comment_id, message, author, post_id, "Auto deletion"):
-                        self.statistics['spam_removed'] += 1
-
                         # Trigger comment deleted callback
                         self.trigger_callback('on_comment_deleted', {
                             'comment_id': comment_id,
@@ -439,7 +437,7 @@ class AutoMonitor:
     
     def _delete_spam_comment(self, comment_id: str, message: str, author: str, post_id: str, reason: str = "Auto deletion") -> bool:
         """
-        Delete a spam comment
+        Delete a spam comment with enhanced logging
 
         Args:
             comment_id (str): Comment ID
@@ -452,17 +450,28 @@ class AutoMonitor:
             bool: True if successful
         """
         try:
+            logger.info(f"🗑️ Attempting to delete spam comment: {comment_id} by {author}")
+            logger.debug(f"Comment content: {message[:100]}...")
+
             success = self.facebook_api.delete_comment(comment_id)
 
             if success:
-                logger.info(f"Deleted spam comment by {author}: {message[:50]}... (Reason: {reason})")
+                logger.info(f"✅ Successfully deleted spam comment by {author}: {message[:50]}... (Reason: {reason})")
+
+                # Update statistics
+                self.statistics['spam_removed'] += 1
 
                 # Log deletion
                 self._add_log_entry('DELETED', comment_id, author, message, post_id, reason)
 
                 return True
             else:
-                logger.warning(f"Failed to delete comment {comment_id}")
+                logger.warning(f"❌ Failed to delete comment {comment_id} by {author}")
+                logger.debug(f"Failed comment content: {message[:100]}...")
+
+                # Log failed deletion attempt
+                self._add_log_entry('DELETE_FAILED', comment_id, author, message, post_id, f"Failed: {reason}")
+
                 return False
 
         except Exception as e:
@@ -470,22 +479,32 @@ class AutoMonitor:
             return False
     
     def get_statistics(self) -> Dict:
-        """Get current monitoring statistics"""
+        """Get current monitoring statistics with validation"""
         stats = self.statistics.copy()
         stats['is_running'] = self.is_running
         stats['last_check'] = self.last_check
-        
+
+        # Validate statistics consistency
+        spam_detected = stats.get('spam_detected', 0)
+        spam_removed = stats.get('spam_removed', 0)
+
+        # Fix impossible statistics (spam_removed > spam_detected)
+        if spam_removed > spam_detected and spam_detected > 0:
+            logger.warning(f"Statistics inconsistency detected: spam_removed ({spam_removed}) > spam_detected ({spam_detected})")
+            # Don't auto-fix, just log for debugging
+
         if stats['start_time']:
             runtime = datetime.now() - stats['start_time']
             stats['runtime_seconds'] = runtime.total_seconds()
             stats['runtime_formatted'] = f"{runtime.seconds // 3600}h {(runtime.seconds % 3600) // 60}m {runtime.seconds % 60}s"
-        
+
         return stats
     
     def reset_statistics(self):
         """Reset monitoring statistics"""
         self.statistics = {
             'comments_processed': 0,
+            'spam_detected': 0,
             'spam_removed': 0,
             'errors': 0,
             'start_time': datetime.now() if self.is_running else None

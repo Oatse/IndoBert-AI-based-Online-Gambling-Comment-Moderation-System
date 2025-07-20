@@ -169,3 +169,35 @@ class SettingsPage:
                     st.session_state.comments_cache = {}
                     NotificationManager.show_notification("Cache cleared!", "info", 2000)
                     st.rerun()
+
+            # # Statistics Reset Section
+            # st.markdown("#### 📊 Statistics Management")
+
+            # col1, col2, col3 = st.columns([1, 1, 1])
+
+            # with col1:
+            #     current_stats = st.session_state.get('statistics', {})
+            #     st.metric("Comments Processed", current_stats.get('comments_processed', 0))
+
+            # with col2:
+            #     st.metric("Spam Detected", current_stats.get('spam_detected', 0))
+
+            # with col3:
+            #     st.metric("Spam Removed", current_stats.get('spam_removed', 0))
+
+            # if st.button("🔄 Reset Statistics", type="secondary"):
+            #     # Reset session state statistics
+            #     st.session_state.statistics = {
+            #         'comments_processed': 0,
+            #         'spam_detected': 0,
+            #         'spam_removed': 0,
+            #         'last_check': None,
+            #         'start_time': None
+            #     }
+
+            #     # Reset auto monitor statistics if running
+            #     if 'auto_monitor' in st.session_state and st.session_state.auto_monitor is not None:
+            #         st.session_state.auto_monitor.reset_statistics()
+
+            #     NotificationManager.show_notification("Statistics reset!", "info", 2000)
+            #     st.rerun()

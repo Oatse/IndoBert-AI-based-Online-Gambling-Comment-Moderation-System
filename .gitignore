@@ -111,3 +111,14 @@ pending_spam_highlight.md
 settings_highlight.md
 test_detector_highlight.md
 scripts/notification_demo.py
+scripts/debug_page_id.py
+scripts/generate_new_token.py
+scripts/test_10_posts_15_comments.py
+scripts/test_current_token.py
+scripts/test_enhanced_deletion.py
+scripts/test_facebook_delete_debug.py
+scripts/test_fixed_page_id.py
+scripts/test_old_vs_new_comments.py
+scripts/test_simple_monitor.py
+scripts/test_statistics_fix.py
+scripts/test_token_permissions.py
