@@ -25,3 +25,6 @@ plotly>=5.0.0
 
 # For better performance in cloud deployment
 psutil>=5.8.0
+
+# Google Drive Downloader
+gdown>=4.7.1
