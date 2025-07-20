@@ -138,7 +138,7 @@ class DashboardRenderer:
 
         try:
             # Get recent posts from Facebook
-            posts = self.facebook_api.get_recent_posts(limit=5)
+            posts = self.facebook_api.get_recent_posts(limit=10)
 
             if not posts:
                 st.info("No recent posts found.")

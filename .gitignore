@@ -102,3 +102,12 @@ DEPLOYMENT_CHAPTER.md
 test_streamlit_deployment.py
 DEPLOYMENT.md
 README_DEPLOYMENT.md
+DASHBOARD_HIGHLIGHTS.md
+env_example_highlight.md
+FACEBOOK_API_HIGHLIGHTS.md
+logs_highlight.md
+manual_check_highlight.md
+pending_spam_highlight.md
+settings_highlight.md
+test_detector_highlight.md
+scripts/notification_demo.py
